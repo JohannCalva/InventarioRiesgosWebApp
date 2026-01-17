@@ -1,14 +1,85 @@
-<h1>Editar Activo</h1>
+{% extends 'core/base.html' %}
 
-<p>
-    <strong>Proyecto:</strong> {{ activo.proyecto.nombre }}<br>
-    <strong>CIA promedio:</strong> {{ activo.cia_promedio }}
-</p>
+{% block title %}Editar Activo - {{ activo.nombre }}{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar cambios</button>
-</form>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'lista_activos' activo.proyecto.id %}">Activos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Editar: {{ activo.nombre }}</li>
+    </ol>
+</nav>
 
-<a href="{% url 'lista_activos' activo.proyecto.id %}">Volver</a>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Editar Activo</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.nombre.id_for_label }}">{{ form.nombre.label}}</label>
+                            {{ form.nombre }}
+                            <div class="invalid-feedback">{{ form.nombre.errors }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.tipo.id_for_label }}">{{ form.tipo.label }}</label>
+                            {{ form.tipo }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label}}</label>
+                        {{ form.descripcion }}
+                    </div>
+
+                    <fieldset class="border p-3 mb-3 rounded">
+                        <legend class="w-auto text-primary fs-6 px-2">Valoración CIA (1-5)</legend>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="{{ form.c.id_for_label }}">Confidencialidad</label>
+                                {{ form.c }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="{{ form.i.id_for_label }}">Integridad</label>
+                                {{ form.i }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="{{ form.d.id_for_label }}">Disponibilidad</label>
+                                {{ form.d }}
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.estado.id_for_label }}">{{ form.estado.label}}</label>
+                            {{ form.estado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nivel Criticidad (Calculado)</label>
+                            <input type="text" class="form-control" value="{{ activo.nivel_criticidad }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields if necessary, or just render the rest -->
+                    {% for field in form.hidden_fields %}
+                    {{ field }}
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'lista_activos' activo.proyecto.id %}"
+                            class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,43 +1,96 @@
-<h1>Activos del proyecto: {{ proyecto.nombre }}</h1>
+{% extends 'core/base.html' %}
 
-<a href="{% url 'crear_activo' proyecto.id %}">
-    Nuevo activo manual
-</a>
+{% block title %}Activos - {{ proyecto.nombre }}{% endblock %}
 
-|
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ proyecto.nombre }}</li>
+    </ol>
+</nav>
 
-<a href="{% url 'importar_activos_shodan' proyecto.id %}">
-    Importar activos desde Shodan
-</a>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Inventario de Activos</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'crear_activo' proyecto.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-plus-lg"></i> Manual
+            </a>
+            <a href="{% url 'importar_activos_shodan' proyecto.id %}" class="btn btn-sm btn-outline-dark">
+                <i class="bi bi-globe"></i> Importar (Shodan)
+            </a>
+        </div>
+    </div>
+</div>
 
-
-<table border="1">
-    <tr>
-        <th>Nombre</th>
-        <th>Tipo</th>
-        <th>CIA</th>
-        <th>Criticidad</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-    </tr>
-
-    {% for activo in activos %}
-    <tr>
-        <td>{{ activo.nombre }}</td>
-        <td>{{ activo.tipo }}</td>
-        <td>{{ activo.cia_promedio }}</td>
-        <td>{{ activo.nivel_criticidad }}</td>
-        <td>{{ activo.estado }}</td>
-        <td>
-            <a href="{% url 'editar_activo' activo.id %}">Editar</a> |
-            <a href="{% url 'eliminar_activo' activo.id %}">Eliminar</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="6">No hay activos registrados</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<a href="{% url 'dashboard' %}">Volver al dashboard</a>
+<div class="table-responsive">
+    <table class="table table-hover table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Activo</th>
+                <th scope="col">Tipo</th>
+                <th scope="col" class="text-center">C-I-D</th>
+                <th scope="col">Criticidad</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activo in activos %}
+            <tr>
+                <td>
+                    <strong>{{ activo.nombre }}</strong>
+                    {% if activo.fuente_osint and activo.fuente_osint != "Manual" %}
+                    <span class="badge bg-info text-dark" title="Origen: {{ activo.fuente_osint }}">OSINT</span>
+                    {% endif %}
+                </td>
+                <td>{{ activo.tipo }}</td>
+                <td class="text-center">
+                    <span class="badge bg-secondary">{{ activo.c }}</span>
+                    <span class="badge bg-secondary">{{ activo.i }}</span>
+                    <span class="badge bg-secondary">{{ activo.d }}</span>
+                </td>
+                <td>
+                    {{ activo.cia_promedio }}
+                    {% if activo.cia_promedio >= 4 %}
+                    <span class="badge bg-danger">Alta</span>
+                    {% elif activo.cia_promedio >= 2 %}
+                    <span class="badge bg-warning text-dark">Media</span>
+                    {% else %}
+                    <span class="badge bg-success">Baja</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if activo.estado == 'Activo' %}
+                    <span class="badge bg-success">Activo</span>
+                    {% elif activo.estado == 'Inactivo' %}
+                    <span class="badge bg-secondary">Inactivo</span>
+                    {% else %}
+                    <span class="badge bg-warning text-dark">Desconocido</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'editar_activo' activo.id %}" class="btn btn-sm btn-outline-secondary"
+                            title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'eliminar_activo' activo.id %}" class="btn btn-sm btn-outline-danger"
+                            title="Eliminar" onclick="return confirm('¿Seguro que desea eliminar este activo?');">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    No hay activos registrados en este proyecto.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

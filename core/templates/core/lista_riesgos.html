@@ -1,40 +1,105 @@
-<h2>Riesgos del proyecto: {{ proyecto.nombre }}</h2>
+{% extends 'core/base.html' %}
 
-<table border="1">
-    <tr>
-        <th>Activo</th>
-        <th>Amenaza</th>
-        <th>Vulnerabilidad</th>
-        <th>Probabilidad</th>
-        <th>Impacto</th>
-        <th>Nivel</th>
-        <th>Prioridad</th>
-        <th>Estado</th>
-    </tr>
+{% block title %}Riesgos - {{ proyecto.nombre }}{% endblock %}
 
-    {% for riesgo in riesgos %}
-    <tr>
-        <td>{{ riesgo.activo.nombre }}</td>
-        <td>{{ riesgo.amenaza }}</td>
-        <td>{{ riesgo.vulnerabilidad }}</td>
-        <td>{{ riesgo.probabilidad }}</td>
-        <td>{{ riesgo.impacto }}</td>
-        <td>{{ riesgo.nivel_riesgo }}</td>
-        <td>{{ riesgo.nivel_prioridad }}</td>
-        <td>{{ riesgo.estado }}</td>
-        <td>
-            {% if riesgo.tratamiento %}
-                <a href="{% url 'detalle_tratamiento' riesgo.id %}">
-                    Ver tratamiento
-                </a>
-            {% else %}
-                <a href="{% url 'tratamiento_riesgo' riesgo.id %}">
-                    Asignar tratamiento
-                </a>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'lista_activos' proyecto.id %}">Activos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Riesgos</li>
+    </ol>
+</nav>
 
-<a href="{% url 'crear_riesgo' proyecto.id %}">Nuevo riesgo</a>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Matriz de Riesgos</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'crear_riesgo' proyecto.id %}" class="btn btn-sm btn-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i> Identificar Riesgo
+        </a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle table-risk">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Activo</th>
+                <th scope="col">Amenaza / Vulnerabilidad</th>
+                <th scope="col" class="text-center">Prob x Imp</th>
+                <th scope="col">Nivel (Inherente)</th>
+                <th scope="col">Tratamiento</th>
+                <th scope="col">Residual</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for riesgo in riesgos %}
+            <tr class="table-{{ riesgo.get_color_class|default:'light' }} bg-opacity-10">
+                <td>
+                    <strong>{{ riesgo.activo.nombre }}</strong><br>
+                    <small class="text-muted">{{ riesgo.activo.tipo }}</small>
+                </td>
+                <td>
+                    <div class="text-primary fw-bold">{{ riesgo.amenaza.nombre }}</div>
+                    <small>{{ riesgo.vulnerabilidad.tipo }} - {{ riesgo.vulnerabilidad.descripcion|truncatechars:50 }}</small>
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-secondary">{{ riesgo.probabilidad }}</span> x
+                    <span class="badge bg-secondary">{{ riesgo.impacto }}</span>
+                </td>
+                <td>
+                    <h5 class="mb-0">
+                        <span class="badge bg-{{ riesgo.get_color_class }}">
+                            {{ riesgo.nivel_riesgo }} - {{ riesgo.nivel_prioridad|upper }}
+                        </span>
+                    </h5>
+                </td>
+                <td>
+                    {% if riesgo.tratamiento %}
+                    <span class="text-success"><i class="bi bi-check-circle-fill"></i> {{ riesgo.tratamiento.estrategia }}</span>
+                    {% else %}
+                    <span class="text-muted"><i class="bi bi-circle"></i> Pendiente</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if riesgo.nivel_riesgo_residual %}
+                    <strong>{{ riesgo.nivel_riesgo_residual }}</strong>
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if riesgo.estado == 'Abierto' %}
+                    <span class="badge bg-danger">Abierto</span>
+                    {% elif riesgo.estado == 'En tratamiento' %}
+                    <span class="badge bg-primary">En tratamiento</span>
+                    {% else %}
+                    <span class="badge bg-success">Cerrado</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not riesgo.tratamiento %}
+                    <a href="{% url 'tratamiento_riesgo' riesgo.id %}" class="btn btn-sm btn-primary">
+                        Tratar
+                    </a>
+                    {% else %}
+                    <a href="{% url 'detalle_tratamiento' riesgo.id %}" class="btn btn-sm btn-outline-info">
+                        Ver Detalles
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted py-5">
+                    <i class="bi bi-shield-check display-4"></i>
+                    <p class="mt-3">No se han identificado riesgos aún.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

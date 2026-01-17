@@ -1,21 +1,73 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Nuevo Riesgo</title>
-</head>
-<body>
+{% extends 'core/base.html' %}
 
-<h1>Nuevo riesgo para el proyecto: {{ proyecto.nombre }}</h1>
+{% block title %}Identificar Riesgo - {{ proyecto.nombre }}{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'lista_activos' proyecto.id %}">Activos</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'lista_riesgos' proyecto.id %}">Riesgos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Nuevo Riesgo</li>
+    </ol>
+</nav>
 
-    <button type="submit">Guardar riesgo</button>
-</form>
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Identificación y Valoración de Riesgo</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
 
-<a href="{% url 'lista_riesgos' proyecto.id %}">Volver a riesgos</a>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Activo Afectado</label>
+                            {{ form.activo }}
+                            <div class="form-text">Solo se muestran los activos pertenecientes a este proyecto.</div>
+                        </div>
+                    </div>
 
-</body>
-</html>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Amenaza</label>
+                            {{ form.amenaza }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Vulnerabilidad</label>
+                            {{ form.vulnerabilidad }}
+                        </div>
+                    </div>
+
+                    <fieldset class="border p-3 mb-4 rounded bg-light">
+                        <legend class="w-auto text-danger fs-6 px-2 fw-bold">Estimación del Riesgo Inherente</legend>
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <label class="form-label">Probabilidad (1: Muy Baja - 5: Muy Alta)</label>
+                                {{ form.probabilidad }}
+                            </div>
+                            <div class="col-md-2 text-center py-2">
+                                <span class="display-6">×</span>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Impacto (1: Insignificante - 5: Crítico)</label>
+                                {{ form.impacto }}
+                            </div>
+                        </div>
+                        <div class="mt-2 text-muted small fst-italic">
+                            * El nivel de riesgo se calculará automáticamente tras guardar.
+                        </div>
+                    </fieldset>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'lista_riesgos' proyecto.id %}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-danger">Registrar Riesgo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,50 +1,104 @@
-<h1>Tratamiento del Riesgo</h1>
+{% extends 'core/base.html' %}
 
-<hr>
+{% block title %}Detalle del Tratamiento{% endblock %}
 
-<h3>Información del Riesgo</h3>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'lista_riesgos' riesgo.activo.proyecto.id %}">Riesgos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detalle Tratamiento</li>
+    </ol>
+</nav>
 
-<p><strong>Activo:</strong> {{ riesgo.activo.nombre }}</p>
-<p><strong>Amenaza:</strong> {{ riesgo.amenaza.nombre }}</p>
-<p><strong>Vulnerabilidad:</strong> {{ riesgo.vulnerabilidad.nombre }}</p>
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="h3 border-bottom pb-2">Detalle de Tratamiento de Riesgo</h2>
+    </div>
+</div>
 
-<hr>
+<div class="row">
+    <!-- Comparativa de Riesgo -->
+    <div class="col-lg-12 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-center text-uppercase text-muted mb-4">Evolución del Riesgo</h5>
+                <div class="row text-center align-items-center">
+                    <!-- Inherente -->
+                    <div class="col-md-5">
+                        <h6 class="text-danger fw-bold">Riesgo Inherente</h6>
+                        <div class="display-4 fw-bold text-danger">{{ riesgo.nivel_riesgo }}</div>
+                        <span class="badge bg-danger">{{ riesgo.nivel_prioridad }}</span>
+                        <div class="mt-2 small text-muted">
+                            Prob: {{ riesgo.probabilidad }} &times; Imp: {{ riesgo.impacto }}
+                        </div>
+                    </div>
 
-<h3>Riesgo Inicial</h3>
+                    <!-- Flecha -->
+                    <div class="col-md-2 d-none d-md-block">
+                        <i class="bi bi-arrow-right display-4 text-muted"></i>
+                    </div>
 
-<ul>
-    <li><strong>Probabilidad:</strong> {{ riesgo.probabilidad }}</li>
-    <li><strong>Impacto:</strong> {{ riesgo.impacto }}</li>
-    <li><strong>Nivel de riesgo:</strong> {{ riesgo.nivel_riesgo }}</li>
-</ul>
+                    <!-- Residual -->
+                    <div class="col-md-5">
+                        <h6 class="text-success fw-bold">Riesgo Residual</h6>
+                        <div class="display-4 fw-bold text-success">{{ riesgo.nivel_riesgo_residual }}</div>
+                        <!-- Logic for residual priority coloring could be added here similar to inherent -->
+                        <div class="mt-2 small text-muted">
+                            Prob: {{ riesgo.probabilidad_residual }} &times; Imp: {{ riesgo.impacto_residual }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<hr>
+    <!-- Detalles del Control -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 border-primary">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-shield-check"></i> Control Implementado
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <strong>Estrategia:</strong> {{ tratamiento.estrategia }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Control ISO 27002:</strong> {{ tratamiento.control_iso_27002 }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Responsable:</strong> {{ tratamiento.responsable }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Fecha Implementación:</strong> {{ tratamiento.fecha_implementacion }}
+                </li>
+            </ul>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Descripción</h6>
+                <p class="card-text">{{ tratamiento.descripcion_control }}</p>
+            </div>
+        </div>
+    </div>
 
-<h3>Tratamiento Aplicado</h3>
-
-<p><strong>Estrategia:</strong> {{ riesgo.tratamiento.estrategia }}</p>
-<p><strong>Control aplicado:</strong> {{ riesgo.tratamiento.descripcion_control }}</p>
-<p><strong>Control ISO 27002:</strong> {{ riesgo.tratamiento.control_iso_27002 }}</p>
-<p><strong>Responsable:</strong> {{ riesgo.tratamiento.responsable }}</p>
-<p><strong>Fecha de implementación:</strong> {{ riesgo.tratamiento.fecha_implementacion }}</p>
-
-<hr>
-
-<h3>Riesgo Residual</h3>
-
-{% if riesgo.nivel_riesgo_residual %}
-    <ul>
-        <li><strong>Probabilidad residual:</strong> {{ riesgo.probabilidad_residual }}</li>
-        <li><strong>Impacto residual:</strong> {{ riesgo.impacto_residual }}</li>
-        <li><strong>Nivel de riesgo residual:</strong> {{ riesgo.nivel_riesgo_residual }}</li>
-    </ul>
-{% else %}
-    <p><em>El riesgo residual aún no ha sido evaluado.</em></p>
-{% endif %}
-
-<hr>
-<a href="{% url 'editar_riesgo' riesgo.id %}">
-    Editar estado y riesgo residual
-</a>
-
-<a href="{% url 'lista_riesgos' riesgo.activo.proyecto.id %}">Volver a riesgos</a>
+    <!-- Información del Activo y Amenaza -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 bg-light">
+            <div class="card-header">
+                Contexto del Riesgo
+            </div>
+            <div class="card-body">
+                <p><strong>Activo:</strong> {{ riesgo.activo.nombre }} <span class="badge bg-secondary">{{riesgo.activo.tipo }}</span></p>
+                <p><strong>Amenaza:</strong> {{ riesgo.amenaza.nombre }}</p>
+                <p><strong>Vulnerabilidad:</strong> {{ riesgo.vulnerabilidad.tipo }}</p>
+                <p class="text-muted fst-italic">{{ riesgo.vulnerabilidad.descripcion }}</p>
+                <hr>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'editar_riesgo' riesgo.id %}" class="btn btn-outline-warning">
+                        <i class="bi bi-pencil-square"></i> Editar Estado / Residual
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

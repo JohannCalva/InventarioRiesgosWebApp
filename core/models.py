@@ -168,8 +168,18 @@ class Riesgo(models.Model):
         super().save(*args, **kwargs)
 
 
+
     def __str__(self):
         return f"Riesgo - {self.activo.nombre}"
+
+    def get_color_class(self):
+        """Devuelve la clase de color de Bootstrap según el nivel de riesgos."""
+        if self.nivel_prioridad == 'Alta':
+            return 'danger'
+        elif self.nivel_prioridad == 'Media':
+            return 'warning'
+        else:
+            return 'success'
 
 
 class TratamientoRiesgo(models.Model):

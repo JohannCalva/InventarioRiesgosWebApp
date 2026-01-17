@@ -1,11 +1,98 @@
-<h2>Tratamiento del riesgo</h2>
+{% extends 'core/base.html' %}
 
-<p><strong>Activo:</strong> {{ riesgo.activo.nombre }}</p>
-<p><strong>Amenaza:</strong> {{ riesgo.amenaza }}</p>
-<p><strong>Nivel actual:</strong> {{ riesgo.nivel_riesgo }}</p>
+{% block title %}Tratamiento de Riesgo{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar tratamiento</button>
-</form>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'lista_riesgos' riesgo.activo.proyecto.id %}">Riesgos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tratamiento</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Contexto del Riesgo -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 bg-light border-secondary">
+            <div class="card-header fw-bold">Resumen del Riesgo</div>
+            <div class="card-body">
+                <h5 class="card-title text-danger">Nivel: {{ riesgo.nivel_riesgo }} ({{ riesgo.nivel_prioridad }})</h5>
+                <hr>
+                <p><strong>Activo:</strong> {{ riesgo.activo.nombre }}</p>
+                <p><strong>Amenaza:</strong> {{ riesgo.amenaza.nombre }}</p>
+                <p><strong>Vulnerabilidad:</strong> {{ riesgo.vulnerabilidad.tipo }}</p>
+                <div class="alert alert-warning py-2 mb-0">
+                    Probabilidad: <strong>{{ riesgo.probabilidad }}</strong><br>
+                    Impacto: <strong>{{ riesgo.impacto }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Tratamiento -->
+    <div class="col-md-8 mb-4">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Plan de Tratamiento y Riesgo Residual</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <h5 class="text-primary mb-3">1. Estrategia y Control</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Estrategia</label>
+                            {{ form.estrategia }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Control ISO 27002</label>
+                            {{ form.control_iso_27002 }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Descripción del Control</label>
+                        {{ form.descripcion_control }}
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Responsable</label>
+                            {{ form.responsable }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Implementación</label>
+                            {{ form.fecha_implementacion }}
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="text-success mb-3">2. Cálculo del Riesgo Residual</h5>
+                    <p class="text-muted small">Estime los nuevos valores de probabilidad e impacto tras aplicar el
+                        control.</p>
+
+                    <div class="row align-items-end mb-3">
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Probabilidad Residual</label>
+                            {{ form.probabilidad_residual }}
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Impacto Residual</label>
+                            {{ form.impacto_residual }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'lista_riesgos' riesgo.activo.proyecto.id %}"
+                            class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Guardar Tratamiento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
