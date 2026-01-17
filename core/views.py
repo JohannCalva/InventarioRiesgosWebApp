@@ -3,9 +3,34 @@ from core.models import ProyectoEvaluacion, ActivoDigital, Riesgo, TratamientoRi
 from core.forms import ProyectoEvaluacionForm, ActivoDigitalForm, ActivoDigitalEdicionForm, RiesgoEdicionForm, RiesgoForm, ShodanBusquedaForm, TratamientoRiesgoForm
 from core.services.shodan_service import crear_activos_desde_shodan, resolver_objetivo, resolver_objetivo
 
+from django.db.models import Count, Q
+
 def dashboard(request):
-    proyectos = ProyectoEvaluacion.objects.all()
+    proyectos = ProyectoEvaluacion.objects.annotate(
+        total_riesgos=Count('activos__riesgos'),
+        riesgos_altos=Count('activos__riesgos', filter=Q(activos__riesgos__nivel_prioridad='Alta')),
+        riesgos_medios=Count('activos__riesgos', filter=Q(activos__riesgos__nivel_prioridad='Media')),
+        riesgos_bajos=Count('activos__riesgos', filter=Q(activos__riesgos__nivel_prioridad='Baja')),
+        riesgos_abiertos=Count('activos__riesgos', filter=Q(activos__riesgos__estado='Abierto')),
+        riesgos_tratados=Count('activos__riesgos', filter=Q(activos__riesgos__estado='En tratamiento')),
+        riesgos_cerrados=Count('activos__riesgos', filter=Q(activos__riesgos__estado='Cerrado')),
+    )
     return render(request, 'core/dashboard.html', {'proyectos': proyectos})
+
+# ... (omitted)
+
+def reporte_proyecto(request, proyecto_id):
+    proyecto = get_object_or_404(ProyectoEvaluacion, id=proyecto_id)
+    activos = ActivoDigital.objects.filter(proyecto=proyecto)
+    riesgos = Riesgo.objects.filter(activo__proyecto=proyecto).select_related(
+        'activo', 'amenaza', 'vulnerabilidad', 'tratamiento'
+    ).order_by('-nivel_riesgo')
+
+    return render(request, 'core/reporte_proyecto.html', {
+        'proyecto': proyecto,
+        'activos': activos,
+        'riesgos': riesgos
+    })
 
 def crear_proyecto(request):
     if request.method == 'POST':

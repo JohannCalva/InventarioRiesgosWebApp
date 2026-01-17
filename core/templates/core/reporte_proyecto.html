@@ -1,0 +1,122 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Reporte - {{ proyecto.nombre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .table {
+            border-color: #000 !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4 no-print">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Reporte de Proyecto</li>
+            </ol>
+        </nav>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="bi bi-printer"></i> Imprimir Reporte
+        </button>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="text-center mb-5">
+            <h1 class="h3 fw-bold">Informe de Gestión de Riesgos de Seguridad</h1>
+            <h2 class="h5 text-muted">{{ proyecto.nombre }}</h2>
+            <p class="mb-0"><strong>Organización:</strong> {{ proyecto.tipo_organizacion }}</p>
+            <p class="mb-0"><strong>Responsable:</strong> {{ proyecto.responsable }}</p>
+            <p class="small text-muted">Generado: {% now "d/m/Y H:i" %}</p>
+        </div>
+
+        <hr>
+
+        <h3 class="h5 mt-4 text-primary">1. Inventario de Activos</h3>
+        <table class="table table-bordered table-sm small">
+            <thead class="table-light">
+                <tr>
+                    <th>Activo</th>
+                    <th>Tipo</th>
+                    <th class="text-center">Valoración (C/I/D)</th>
+                    <th>Criticidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activo in activos %}
+                <tr>
+                    <td>{{ activo.nombre }}</td>
+                    <td>{{ activo.tipo }}</td>
+                    <td class="text-center">{{ activo.c }} / {{ activo.i }} / {{ activo.d }}</td>
+                    <td>{{ activo.nivel_criticidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3 class="h5 mt-5 text-danger">2. Registro de Riesgos y Tratamiento</h3>
+        <table class="table table-bordered table-sm small align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Riesgo (Activo - Amenaza)</th>
+                    <th class="text-center" width="10%">Nivel Inherente</th>
+                    <th>Estado</th>
+                    <th>Estrategia / Control</th>
+                    <th class="text-center" width="10%">Nivel Residual</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for riesgo in riesgos %}
+                <tr>
+                    <td>
+                        <strong>{{ riesgo.activo.nombre }}</strong><br>
+                        {{ riesgo.amenaza.nombre }}<br>
+                        <span class="text-muted fst-italic">{{ riesgo.vulnerabilidad.tipo }}</span>
+                    </td>
+                    <td
+                        class="text-center fw-bold {% if riesgo.nivel_prioridad == 'Alta' %}text-danger{% elif riesgo.nivel_prioridad == 'Media' %}text-warning{% else %}text-success{% endif %}">
+                        {{ riesgo.nivel_riesgo }} ({{ riesgo.nivel_prioridad|slice:":1" }})
+                    </td>
+                    <td>{{ riesgo.estado }}</td>
+                    <td>
+                        {% if riesgo.tratamiento %}
+                        <strong>{{ riesgo.tratamiento.estrategia }}</strong><br>
+                        {{ riesgo.tratamiento.control_iso_27002 }}
+                        {% else %}
+                        <span class="text-muted">- Sin tratamiento -</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center fw-bold">
+                        {% if riesgo.nivel_riesgo_residual %}
+                        {{ riesgo.nivel_riesgo_residual }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mt-5 pt-5 text-center no-print">
+            <p class="text-muted small">Fin del reporte.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -12,29 +12,68 @@
     </div>
 </div>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for proyecto in proyectos %}
     <div class="col">
-        <div class="card h-100">
-            <div class="card-header bg-transparent border-success">
-                <h5 class="card-title mb-0">{{ proyecto.nombre }}</h5>
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 text-primary">{{ proyecto.nombre }}</h5>
+                <span class="badge bg-light text-dark border">{{ proyecto.tipo_organizacion }}</span>
             </div>
-            <div class="card-body">
-                <p class="card-text">
-                    <strong>Responsable:</strong> {{ proyecto.responsable }}<br>
-                    <strong>Organización:</strong> {{ proyecto.tipo_organizacion }}
+
+            <div class="card-body pt-0">
+                <p class="card-text text-muted small mb-3">
+                    <i class="bi bi-person"></i> {{ proyecto.responsable }}
                 </p>
-                <div class="d-grid gap-2">
-                    <a href="{% url 'lista_activos' proyecto.id %}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-box-seam"></i> Gestionar Activos
-                    </a>
-                    <a href="{% url 'lista_riesgos' proyecto.id %}" class="btn btn-outline-danger btn-sm">
-                        <i class="bi bi-exclamation-triangle"></i> Gestionar Riesgos
-                    </a>
+
+                <!-- Mini Dashboard Stats -->
+                <div class="row g-2 text-center mb-3">
+                    <div class="col-4">
+                        <div class="border rounded p-2 bg-light">
+                            <div class="fw-bold h5 mb-0">{{ proyecto.total_riesgos }}</div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Riesgos</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div
+                            class="border rounded p-2 {% if proyecto.riesgos_altos > 0 %}bg-danger text-white{% else %}bg-light{% endif %}">
+                            <div class="fw-bold h5 mb-0">{{ proyecto.riesgos_altos }}</div>
+                            <small
+                                class="{% if proyecto.riesgos_altos > 0 %}text-white-50{% else %}text-muted{% endif %}"
+                                style="font-size: 0.7rem;">Altos</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-2 bg-light">
+                            <div class="fw-bold h5 mb-0 text-success">{{ proyecto.riesgos_tratados }}</div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Tratados</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress mb-3" style="height: 6px;">
+                    {% if proyecto.total_riesgos > 0 %}
+                    <div class="progress-bar bg-success" role="progressbar"
+                        style="width: {% widthratio proyecto.riesgos_cerrados proyecto.total_riesgos 100 %}%"></div>
+                    <div class="progress-bar bg-primary" role="progressbar"
+                        style="width: {% widthratio proyecto.riesgos_tratados proyecto.total_riesgos 100 %}%"></div>
+                    <div class="progress-bar bg-danger" role="progressbar"
+                        style="width: {% widthratio proyecto.riesgos_abiertos proyecto.total_riesgos 100 %}%"></div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'lista_activos' proyecto.id %}"
+                        class="btn btn-sm btn-outline-secondary flex-fill">Activos</a>
+                    <a href="{% url 'lista_riesgos' proyecto.id %}"
+                        class="btn btn-sm btn-outline-secondary flex-fill">Riesgos</a>
                 </div>
             </div>
-            <div class="card-footer text-muted small">
-                Actualizado: {{ proyecto.fecha_actualizacion|date:"d M Y" }}
+            <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                <small class="text-muted">Actualizado: {{ proyecto.fecha_actualizacion|date:"d M" }}</small>
+                <a href="{% url 'reporte_proyecto' proyecto.id %}" class="btn btn-sm btn-dark">
+                    <i class="bi bi-file-earmark-text"></i> Reporte
+                </a>
             </div>
         </div>
     </div>
