@@ -58,13 +58,22 @@ class ActivoDigital(models.Model):
         editable=False
     )
 
-    nivel_criticidad = models.CharField(max_length=20)
+    nivel_criticidad = models.CharField(max_length=20, blank=True)
     fuente_osint = models.CharField(max_length=100)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES)
     fecha_identificacion = models.DateField(auto_now_add=True)
 
+
     def save(self, *args, **kwargs):
         self.cia_promedio = round((self.c + self.i + self.d) / 3, 2)
+        
+        if self.cia_promedio >= 4:
+            self.nivel_criticidad = 'Alta'
+        elif self.cia_promedio >= 2:
+            self.nivel_criticidad = 'Media'
+        else:
+            self.nivel_criticidad = 'Baja'
+
         super().save(*args, **kwargs)
 
     def __str__(self):

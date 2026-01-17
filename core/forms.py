@@ -22,7 +22,6 @@ class ActivoDigitalForm(forms.ModelForm):
             'c',
             'i',
             'd',
-            'nivel_criticidad',
             'fuente_osint',
             'estado',
         ]
@@ -33,8 +32,29 @@ class ActivoDigitalForm(forms.ModelForm):
             'c': forms.NumberInput(attrs={'class': 'form-control'}),
             'i': forms.NumberInput(attrs={'class': 'form-control'}),
             'd': forms.NumberInput(attrs={'class': 'form-control'}),
-            'nivel_criticidad': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'fuente_osint': forms.TextInput(attrs={'class': 'form-control'}),
+            'estado': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+class ActivoDigitalEdicionForm(forms.ModelForm):
+    class Meta:
+        model = ActivoDigital
+        fields = [
+            'nombre',
+            'tipo',
+            'descripcion',
+            'c',
+            'i',
+            'd',
+            'estado',
+        ]
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo': forms.Select(attrs={'class': 'form-select'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'c': forms.NumberInput(attrs={'class': 'form-control'}),
+            'i': forms.NumberInput(attrs={'class': 'form-control'}),
+            'd': forms.NumberInput(attrs={'class': 'form-control'}),
             'estado': forms.Select(attrs={'class': 'form-select'}),
         }
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from core.models import ProyectoEvaluacion, ActivoDigital, Riesgo, TratamientoRiesgo
-from core.forms import ProyectoEvaluacionForm, ActivoDigitalForm, RiesgoEdicionForm, RiesgoForm, ShodanBusquedaForm, TratamientoRiesgoForm
+from core.forms import ProyectoEvaluacionForm, ActivoDigitalForm, ActivoDigitalEdicionForm, RiesgoEdicionForm, RiesgoForm, ShodanBusquedaForm, TratamientoRiesgoForm
 from core.services.shodan_service import crear_activos_desde_shodan, resolver_objetivo, resolver_objetivo
 
 def dashboard(request):
@@ -50,7 +50,7 @@ def editar_activo(request, activo_id):
     activo = get_object_or_404(ActivoDigital, id=activo_id)
 
     if request.method == 'POST':
-        form = ActivoDigitalForm(request.POST, instance=activo)
+        form = ActivoDigitalEdicionForm(request.POST, instance=activo)
         if form.is_valid():
             form.save()
             return redirect(
@@ -58,7 +58,7 @@ def editar_activo(request, activo_id):
                 proyecto_id=activo.proyecto.id
             )
     else:
-        form = ActivoDigitalForm(instance=activo)
+        form = ActivoDigitalEdicionForm(instance=activo)
 
     return render(request, 'core/editar_activo.html', {
         'form': form,
