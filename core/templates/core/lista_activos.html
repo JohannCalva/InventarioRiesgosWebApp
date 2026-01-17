@@ -1,0 +1,43 @@
+<h1>Activos del proyecto: {{ proyecto.nombre }}</h1>
+
+<a href="{% url 'crear_activo' proyecto.id %}">
+    Nuevo activo manual
+</a>
+
+|
+
+<a href="{% url 'importar_activos_shodan' proyecto.id %}">
+    Importar activos desde Shodan
+</a>
+
+
+<table border="1">
+    <tr>
+        <th>Nombre</th>
+        <th>Tipo</th>
+        <th>CIA</th>
+        <th>Criticidad</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for activo in activos %}
+    <tr>
+        <td>{{ activo.nombre }}</td>
+        <td>{{ activo.tipo }}</td>
+        <td>{{ activo.cia_promedio }}</td>
+        <td>{{ activo.nivel_criticidad }}</td>
+        <td>{{ activo.estado }}</td>
+        <td>
+            <a href="{% url 'editar_activo' activo.id %}">Editar</a> |
+            <a href="{% url 'eliminar_activo' activo.id %}">Eliminar</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">No hay activos registrados</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'dashboard' %}">Volver al dashboard</a>

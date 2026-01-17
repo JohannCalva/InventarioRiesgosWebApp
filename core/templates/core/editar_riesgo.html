@@ -1,0 +1,39 @@
+<h1>Editar Riesgo</h1>
+
+<hr>
+
+<h3>Información del Riesgo</h3>
+<p><strong>Activo:</strong> {{ riesgo.activo.nombre }}</p>
+<p><strong>Amenaza:</strong> {{ riesgo.amenaza.nombre }}</p>
+<p><strong>Vulnerabilidad:</strong> {{ riesgo.vulnerabilidad.nombre }}</p>
+
+<hr>
+
+<form method="post">
+    {% csrf_token %}
+
+    <fieldset>
+        <legend>Riesgo Residual</legend>
+
+        {{ form.probabilidad_residual.label_tag }}
+        {{ form.probabilidad_residual }}
+
+        {{ form.impacto_residual.label_tag }}
+        {{ form.impacto_residual }}
+    </fieldset>
+
+    <fieldset>
+        <legend>Gestión del Riesgo</legend>
+
+        {{ form.estado.label_tag }}
+        {{ form.estado }}
+    </fieldset>
+
+    <br>
+
+    <button type="submit">Guardar cambios</button>
+</form>
+
+<br>
+
+<a href="{% url 'detalle_tratamiento' riesgo.id %}">Volver al tratamiento</a>

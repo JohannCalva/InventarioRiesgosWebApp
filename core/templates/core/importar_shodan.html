@@ -1,0 +1,25 @@
+<h2>Importar activos desde Shodan</h2>
+
+<p>
+Proyecto: <strong>{{ proyecto.nombre }}</strong>
+</p>
+
+{% if error %}
+<div style="color: red; margin-bottom: 15px;">
+    <strong>Error:</strong> {{ error }}
+</div>
+{% endif %}
+
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">
+        Consultar Shodan
+    </button>
+</form>
+
+<a href="{% url 'lista_activos' proyecto.id %}">
+    Volver a activos
+</a>

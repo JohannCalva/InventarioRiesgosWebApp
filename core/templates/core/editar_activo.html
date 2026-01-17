@@ -1,0 +1,14 @@
+<h1>Editar Activo</h1>
+
+<p>
+    <strong>Proyecto:</strong> {{ activo.proyecto.nombre }}<br>
+    <strong>CIA promedio:</strong> {{ activo.cia_promedio }}
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cambios</button>
+</form>
+
+<a href="{% url 'lista_activos' activo.proyecto.id %}">Volver</a>

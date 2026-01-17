@@ -1,0 +1,16 @@
+<h1>Proyectos de Evaluación</h1>
+
+<a href="{% url 'crear_proyecto' %}">Nuevo Proyecto</a>
+
+<ul>
+{% for proyecto in proyectos %}
+    <li>
+        {{ proyecto.nombre }}
+        <a href="{% url 'lista_activos' proyecto.id %}">Activos</a>
+        <a href="{% url 'lista_riesgos' proyecto.id %}">
+            Ver riesgos
+        </a>
+
+    </li>
+{% endfor %}
+</ul>

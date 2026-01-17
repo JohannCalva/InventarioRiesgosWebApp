@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Riesgo</title>
+</head>
+<body>
+
+<h1>Nuevo riesgo para el proyecto: {{ proyecto.nombre }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Guardar riesgo</button>
+</form>
+
+<a href="{% url 'lista_riesgos' proyecto.id %}">Volver a riesgos</a>
+
+</body>
+</html>

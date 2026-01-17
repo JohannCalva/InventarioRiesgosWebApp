@@ -1,0 +1,40 @@
+<h2>Riesgos del proyecto: {{ proyecto.nombre }}</h2>
+
+<table border="1">
+    <tr>
+        <th>Activo</th>
+        <th>Amenaza</th>
+        <th>Vulnerabilidad</th>
+        <th>Probabilidad</th>
+        <th>Impacto</th>
+        <th>Nivel</th>
+        <th>Prioridad</th>
+        <th>Estado</th>
+    </tr>
+
+    {% for riesgo in riesgos %}
+    <tr>
+        <td>{{ riesgo.activo.nombre }}</td>
+        <td>{{ riesgo.amenaza }}</td>
+        <td>{{ riesgo.vulnerabilidad }}</td>
+        <td>{{ riesgo.probabilidad }}</td>
+        <td>{{ riesgo.impacto }}</td>
+        <td>{{ riesgo.nivel_riesgo }}</td>
+        <td>{{ riesgo.nivel_prioridad }}</td>
+        <td>{{ riesgo.estado }}</td>
+        <td>
+            {% if riesgo.tratamiento %}
+                <a href="{% url 'detalle_tratamiento' riesgo.id %}">
+                    Ver tratamiento
+                </a>
+            {% else %}
+                <a href="{% url 'tratamiento_riesgo' riesgo.id %}">
+                    Asignar tratamiento
+                </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'crear_riesgo' proyecto.id %}">Nuevo riesgo</a>

@@ -1,0 +1,50 @@
+<h1>Tratamiento del Riesgo</h1>
+
+<hr>
+
+<h3>Información del Riesgo</h3>
+
+<p><strong>Activo:</strong> {{ riesgo.activo.nombre }}</p>
+<p><strong>Amenaza:</strong> {{ riesgo.amenaza.nombre }}</p>
+<p><strong>Vulnerabilidad:</strong> {{ riesgo.vulnerabilidad.nombre }}</p>
+
+<hr>
+
+<h3>Riesgo Inicial</h3>
+
+<ul>
+    <li><strong>Probabilidad:</strong> {{ riesgo.probabilidad }}</li>
+    <li><strong>Impacto:</strong> {{ riesgo.impacto }}</li>
+    <li><strong>Nivel de riesgo:</strong> {{ riesgo.nivel_riesgo }}</li>
+</ul>
+
+<hr>
+
+<h3>Tratamiento Aplicado</h3>
+
+<p><strong>Estrategia:</strong> {{ riesgo.tratamiento.estrategia }}</p>
+<p><strong>Control aplicado:</strong> {{ riesgo.tratamiento.descripcion_control }}</p>
+<p><strong>Control ISO 27002:</strong> {{ riesgo.tratamiento.control_iso_27002 }}</p>
+<p><strong>Responsable:</strong> {{ riesgo.tratamiento.responsable }}</p>
+<p><strong>Fecha de implementación:</strong> {{ riesgo.tratamiento.fecha_implementacion }}</p>
+
+<hr>
+
+<h3>Riesgo Residual</h3>
+
+{% if riesgo.nivel_riesgo_residual %}
+    <ul>
+        <li><strong>Probabilidad residual:</strong> {{ riesgo.probabilidad_residual }}</li>
+        <li><strong>Impacto residual:</strong> {{ riesgo.impacto_residual }}</li>
+        <li><strong>Nivel de riesgo residual:</strong> {{ riesgo.nivel_riesgo_residual }}</li>
+    </ul>
+{% else %}
+    <p><em>El riesgo residual aún no ha sido evaluado.</em></p>
+{% endif %}
+
+<hr>
+<a href="{% url 'editar_riesgo' riesgo.id %}">
+    Editar estado y riesgo residual
+</a>
+
+<a href="{% url 'lista_riesgos' riesgo.activo.proyecto.id %}">Volver a riesgos</a>

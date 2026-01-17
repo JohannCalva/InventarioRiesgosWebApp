@@ -1,0 +1,11 @@
+<h2>Tratamiento del riesgo</h2>
+
+<p><strong>Activo:</strong> {{ riesgo.activo.nombre }}</p>
+<p><strong>Amenaza:</strong> {{ riesgo.amenaza }}</p>
+<p><strong>Nivel actual:</strong> {{ riesgo.nivel_riesgo }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar tratamiento</button>
+</form>
