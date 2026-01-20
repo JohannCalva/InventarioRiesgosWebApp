@@ -140,6 +140,9 @@ def crear_riesgo(request, proyecto_id):
 
     if request.method == 'POST':
         form = RiesgoForm(request.POST)
+        # Filtrar el queryset para que solo aparezcan activos de este proyecto
+        form.fields['activo'].queryset = ActivoDigital.objects.filter(proyecto=proyecto)
+        
         if form.is_valid():
             riesgo = form.save(commit=False)
 
@@ -153,6 +156,8 @@ def crear_riesgo(request, proyecto_id):
             return redirect('lista_riesgos', proyecto_id=proyecto.id)
     else:
         form = RiesgoForm()
+        # Filtrar el queryset para mostrar solo activos del proyecto actual
+        form.fields['activo'].queryset = ActivoDigital.objects.filter(proyecto=proyecto)
 
     return render(request, 'core/crear_riesgo.html', {
         'form': form,
